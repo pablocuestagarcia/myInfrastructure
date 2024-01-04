@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+  redis-master:
+    image: redislabs/redismod
+    container_name: redis-master
+    ports:
+      - "6000:6379"
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+
+  redis-slave:
+    image: redislabs/redismod
+    depends_on:
+      - redis-master
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis-slave.conf
+
+  redis-slave2:
+    image: redislabs/redismod
+    depends_on:
+      - redis-master
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis-slave.conf
+
+  sentinel:
+    image: redis
+    depends_on:
+      - redis-master
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+
+  sentinel2:
+    image: redis
+    depends_on:
+      - redis-master
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+
+  sentinel3:
+    image: redis
+    depends_on:
+      - redis-master
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+
+volumes:
+  redis-master-data:
