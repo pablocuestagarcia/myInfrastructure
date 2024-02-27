@@ -8,4 +8,14 @@ resource "helm_release" "monitoring" {
     name  = "grafana.enabled"
     value = "true"
   }
+
+  set {
+    name = "grafana.ingress.enabled"
+    value = "true"
+  }
+
+  set {
+    name = "grafana.ingress.path"
+    value = "/"
+  }
 }
