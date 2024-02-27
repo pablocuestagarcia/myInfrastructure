@@ -1,7 +1,6 @@
 resource "helm_release" "nginx_ingress" {
   name       = "nginx-ingress"
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  chart      = "ingress-nginx"
+  chart      = "charts/ingress-nginx-4.9.1.tgz"
   namespace  = var.namespace
 
   set {
@@ -12,5 +11,20 @@ resource "helm_release" "nginx_ingress" {
   set {
     name  = "controller.watchIngressWithoutClass"
     value = "true"
+  }
+
+  set {
+    name = "controller.metrics.enabled"
+    value = "true"
+  }
+
+  set {
+    name = "controller.metrics.serviceMonitor.enabled"
+    value = "true"
+  }
+
+  set {
+    name = "controller.metrics.serviceMonitor.additionalLabels.release"
+    value = var.prometheus_namespace
   }
 }

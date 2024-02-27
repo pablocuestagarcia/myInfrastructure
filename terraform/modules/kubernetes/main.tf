@@ -6,6 +6,15 @@ module "namespaces" {
   
 }
 
+module "monitoring" {
+  source = "./namespaces"
+  
+  # Variables if are needed
+  namespace = "monitoring"
+  
+}
+
+
 # module "app-example" {
 #   source = "./app-example"
   
