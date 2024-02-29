@@ -16,3 +16,10 @@ module "nginx-ingress" {
   prometheus_namespace = var.monitoring_namespace
   
 }
+
+module "redis" {
+  source = "./redis"
+  depends_on = [ module.prometheus ]
+  
+  # Variables if are needed  
+}
