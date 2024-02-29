@@ -14,6 +14,11 @@ module "monitoring" {
   
 }
 
+module "storage" {
+  source = "./storage"  
+  
+}
+
 
 # module "app-example" {
 #   source = "./app-example"
