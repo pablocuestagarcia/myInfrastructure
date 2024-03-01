@@ -2,26 +2,27 @@
 
 
 resource "helm_release" "redis-sentinel" {
-  name = "redis"
-  chart = "charts/redis-18.17.0.tgz"
+  name      = "redis"
+  chart     = "charts/redis-18.17.0.tgz"
+  namespace = var.namespace
 
   set {
-    name = "image.repository"
+    name  = "image.repository"
     value = "redis/redis-stack-server"
   }
 
   set {
-    name = "image.tag"
+    name  = "image.tag"
     value = "latest"
   }
 
   set {
-    name = "auth.password"
+    name  = "auth.password"
     value = "password"
   }
 
   set {
-    name = "master.configuration"
+    name  = "master.configuration"
     value = <<-EOF
         dir /data
         loadmodule /opt/redis-stack/lib/rejson.so
@@ -30,12 +31,12 @@ resource "helm_release" "redis-sentinel" {
   }
 
   set {
-    name = "master.persistence.enabled"
+    name  = "master.persistence.enabled"
     value = "false"
   }
 
   set {
-    name = "replica.configuration"
+    name  = "replica.configuration"
     value = <<-EOF
         dir /data
         loadmodule /opt/redis-stack/lib/rejson.so
@@ -44,21 +45,17 @@ resource "helm_release" "redis-sentinel" {
   }
 
   set {
-    name = "replica.persistence.enabled"
+    name  = "replica.persistence.enabled"
     value = "false"
   }
 
   set {
-    name = "sentinel.enabled"
+    name  = "sentinel.enabled"
     value = "true"
   }
 
   set {
-    name = "sentinel.persistence.enabled"
+    name  = "sentinel.persistence.enabled"
     value = "false"
   }
-
-  
-
-
 }

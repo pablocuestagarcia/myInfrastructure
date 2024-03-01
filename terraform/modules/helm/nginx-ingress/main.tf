@@ -1,7 +1,7 @@
 resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress"
-  chart      = "charts/ingress-nginx-4.9.1.tgz"
-  namespace  = var.namespace
+  name      = "nginx-ingress"
+  chart     = "charts/ingress-nginx-4.9.1.tgz"
+  namespace = var.namespace
 
   set {
     name  = "controller.service.type"
@@ -14,17 +14,17 @@ resource "helm_release" "nginx_ingress" {
   }
 
   set {
-    name = "controller.metrics.enabled"
+    name  = "controller.metrics.enabled"
     value = "true"
   }
 
   set {
-    name = "controller.metrics.serviceMonitor.enabled"
+    name  = "controller.metrics.serviceMonitor.enabled"
     value = "true"
   }
 
   set {
-    name = "controller.metrics.serviceMonitor.additionalLabels.release"
+    name  = "controller.metrics.serviceMonitor.additionalLabels.release"
     value = var.prometheus_namespace
   }
 }

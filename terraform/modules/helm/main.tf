@@ -2,24 +2,25 @@
 
 module "prometheus" {
   source = "./prometheus"
-  
+
   # Variables if are needed
-  namespace = var.monitoring_namespace  
+  namespace = var.monitoring_namespace
 }
 
 module "nginx-ingress" {
-  source = "./nginx-ingress"
-  depends_on = [ module.prometheus ]
-  
+  source     = "./nginx-ingress"
+  depends_on = [module.prometheus]
+
   # Variables if are needed
-  namespace = var.namespace
+  namespace            = var.namespace
   prometheus_namespace = var.monitoring_namespace
-  
+
 }
 
 module "redis" {
-  source = "./redis"
-  depends_on = [ module.prometheus ]
-  
-  # Variables if are needed  
+  source     = "./redis"
+  depends_on = [module.prometheus]
+
+  # Variables if are needed
+  namespace = var.namespace_redis
 }
