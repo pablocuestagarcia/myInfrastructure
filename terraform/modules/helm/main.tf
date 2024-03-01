@@ -24,3 +24,12 @@ module "redis" {
   # Variables if are needed
   namespace = var.namespace_redis
 }
+
+module "postgresql" {
+  source     = "./postgresql"
+  depends_on = [module.prometheus]
+
+  # Variables if are needed
+  namespace = var.namespace_postgres
+  
+}

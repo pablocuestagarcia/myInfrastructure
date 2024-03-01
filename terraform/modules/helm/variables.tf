@@ -15,3 +15,9 @@ variable "namespace_redis" {
   type        = string
   default     = "default"
 }
+
+variable "namespace_postgres" {
+  description = "The namespace to deploy the postgres stack"
+  type        = string
+  default     = "default"
+}
