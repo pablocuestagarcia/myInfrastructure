@@ -20,6 +20,12 @@ module "namespace_redis" {
   namespace = "redis"
 }
 
+module "namespace_kafka" {
+  source = "./namespaces"
+  # Variables if are needed
+  namespace = "kafka"
+}
+
 module "storage" {
   source = "./storage"
 

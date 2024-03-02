@@ -31,5 +31,15 @@ module "postgresql" {
 
   # Variables if are needed
   namespace = var.namespace_postgres
-  
+
+}
+
+
+module "strimzi-kafka-op" {
+  source     = "./strimzi-kafka-op"
+  depends_on = [module.prometheus]
+
+  # Variables if are needed
+  namespace = var.namespace_kafka
+
 }

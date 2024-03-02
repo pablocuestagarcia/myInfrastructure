@@ -21,3 +21,10 @@ variable "namespace_postgres" {
   type        = string
   default     = "default"
 }
+
+variable "namespace_kafka" {
+  description = "The namespace to deploy the kafka stack"
+  type        = string
+  default     = "default"
+
+}

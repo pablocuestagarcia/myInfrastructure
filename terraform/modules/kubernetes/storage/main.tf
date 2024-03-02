@@ -3,7 +3,7 @@ resource "kubernetes_persistent_volume_v1" "storage" {
   metadata {
     name = "general-storage"
     labels = {
-      "type":"general"
+      "type" : "general"
     }
   }
   spec {
