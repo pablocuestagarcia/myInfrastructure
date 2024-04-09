@@ -23,4 +23,35 @@ resource "helm_release" "postgres" {
     value = "postgres"
   }
 
+  // Asegurarse de que el contexto de seguridad del pod esté habilitado y configurado correctamente.
+  set {
+    name  = "primary.podSecurityContext.enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "primary.podSecurityContext.fsGroup"
+    value = "1001"
+  }
+
+  set {
+    name  = "primary.podSecurityContext.fsGroupChangePolicy"
+    value = "Always"
+  }
+
+  // Ajustar el contexto de seguridad del contenedor según las necesidades.
+  set {
+    name  = "primary.containerSecurityContext.enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "primary.containerSecurityContext.runAsUser"
+    value = "1001"
+  }
+
+  set {
+    name  = "primary.containerSecurityContext.runAsGroup"
+    value = "1001"
+  }
 }

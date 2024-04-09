@@ -28,6 +28,12 @@ module "namespace_kafka" {
 
 module "storage" {
   source = "./storage"
+  path = var.path
 
 }
 
+
+// Examples
+module "app-example" {
+  source = "./app-example"
+}

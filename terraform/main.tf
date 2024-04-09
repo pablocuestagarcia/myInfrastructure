@@ -1,7 +1,7 @@
 
 module "kubernetes" {
   source = "./modules/kubernetes"
-
+  path = "/bitnami/postgresql/data"
 }
 
 module "helm" {

@@ -28,3 +28,9 @@ variable "namespace_kafka" {
   default     = "default"
 
 }
+
+variable "cluster_domain" {
+  description = "The domain of the cluster"
+  type        = string
+  default     = "cluster.local"  
+}

@@ -1,7 +1,7 @@
 resource "kubernetes_ingress_v1" "example_ingress" {
   metadata {
     name      = "example-ingress"
-    namespace = "example"
+    namespace = "default"
   }
 
   spec {
@@ -50,7 +50,7 @@ resource "kubernetes_ingress_v1" "example_ingress" {
 resource "kubernetes_service_v1" "example" {
   metadata {
     name      = "myapp-1"
-    namespace = "example"
+    namespace = "default"
   }
   spec {
     selector = {
@@ -69,7 +69,7 @@ resource "kubernetes_service_v1" "example" {
 resource "kubernetes_service_v1" "example2" {
   metadata {
     name      = "myapp-2"
-    namespace = "example"
+    namespace = "default"
   }
   spec {
     selector = {
@@ -88,7 +88,7 @@ resource "kubernetes_service_v1" "example2" {
 resource "kubernetes_pod_v1" "example" {
   metadata {
     name      = "terraform-example"
-    namespace = "example"
+    namespace = "default"
     labels = {
       app = "myapp-1"
     }
@@ -109,7 +109,7 @@ resource "kubernetes_pod_v1" "example" {
 resource "kubernetes_pod_v1" "example2" {
   metadata {
     name      = "terraform-example2"
-    namespace = "example"
+    namespace = "default"
     labels = {
       app = "myapp-2"
     }

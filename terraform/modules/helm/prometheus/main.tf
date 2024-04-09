@@ -15,6 +15,11 @@ resource "helm_release" "monitoring" {
   }
 
   set {
+    name  = "grafana.ingress.hosts[0]"
+    value = "grafana.${var.cluster_domain}"
+  }
+
+  set {
     name  = "grafana.ingress.path"
     value = "/"
   }

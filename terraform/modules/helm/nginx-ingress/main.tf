@@ -27,4 +27,9 @@ resource "helm_release" "nginx_ingress" {
     name  = "controller.metrics.serviceMonitor.additionalLabels.release"
     value = var.prometheus_namespace
   }
+
+  set {
+    name = "controller.tcp.configMapNamespace"
+    value = var.tcp_configmap_namespace
+  }
 }

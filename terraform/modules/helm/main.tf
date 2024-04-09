@@ -5,6 +5,7 @@ module "prometheus" {
 
   # Variables if are needed
   namespace = var.monitoring_namespace
+  cluster_domain = var.cluster_domain
 }
 
 module "nginx-ingress" {
