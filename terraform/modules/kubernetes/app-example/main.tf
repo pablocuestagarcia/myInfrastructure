@@ -62,7 +62,7 @@ resource "kubernetes_service_v1" "example" {
       target_port = 80
     }
 
-    type = "NodePort"
+    type = "ClusterIP"
   }
 }
 
@@ -81,7 +81,7 @@ resource "kubernetes_service_v1" "example2" {
       target_port = 80
     }
 
-    type = "NodePort"
+    type = "ClusterIP"
   }
 }
 
