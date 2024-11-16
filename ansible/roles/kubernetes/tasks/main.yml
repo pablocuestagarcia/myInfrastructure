@@ -1,0 +1,21 @@
+---
+# tasks file for roles/kubernetes
+- name: Include OS-specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Install prerequisites
+  include_tasks: prerequisites.yml
+
+- name: Install containerd
+  include_tasks: containerd.yml
+
+- name: Install kubernetes packages
+  include_tasks: kubernetes.yml
+
+- name: Configure master node
+  include_tasks: master.yml
+  when: is_master | bool
+
+- name: Configure worker node
+  include_tasks: worker.yml
+  when: not is_master | bool

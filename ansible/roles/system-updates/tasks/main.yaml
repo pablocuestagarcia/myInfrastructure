@@ -1,0 +1,45 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  tags: 
+    - update
+    - system
+
+- name: Upgrade all packages
+  apt:
+    upgrade: yes
+    state: latest
+  tags: 
+    - upgrade
+    - system
+
+- name: Remove unused packages
+  apt:
+    autoremove: yes
+  tags:
+    - cleanup
+    - system
+
+- name: Clean apt cache
+  apt:
+    autoclean: yes
+  tags:
+    - cleanup
+    - system
+
+- name: Check if reboot is required
+  stat:
+    path: /var/run/reboot-required
+  register: reboot_required
+  tags:
+    - reboot
+    - system
+
+- name: Notify if reboot is required
+  debug:
+    msg: "Reboot is required!"
+  when: reboot_required.stat.exists
+  tags:
+    - reboot
+    - system

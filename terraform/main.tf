@@ -1,15 +1,68 @@
 
-module "kubernetes" {
-  source = "./modules/kubernetes"
-  path = "/bitnami/postgresql/data"
+module "namespaces" {
+  source = "./modules/kubernetes/namespaces"
+
+  namespaces = {
+    monitoring = {
+      labels = {
+        name = "monitoring"
+        part-of = "observability"
+      }
+      # resource_quotas = {
+      #   limits_cpu = "3"
+      #   limits_memory = "6Gi"
+      #   pods = "10"
+      # }
+    }
+  }
 }
 
-module "helm" {
-  source = "./modules/helm"
+module "monitoring-storage" {
+  source = "./modules/kubernetes/storage"
+  storage_classes = {
+    "hostpath-storage" = {
+      labels = {
+        type = "hostpath"
+      }
+    }
+  }
 
-  # Variables if are needed
-  namespace            = module.kubernetes.namespace_ingress
-  monitoring_namespace = module.kubernetes.namespace_monitoring
-  namespace_redis      = module.kubernetes.namespace_redis
-  namespace_kafka      = module.kubernetes.namespace_kafka
+  persistent_volumes = {
+    "prometheus-storage" = {
+      storage_size = "20Gi"
+      access_modes = ["ReadWriteOnce"]
+      storage_class_name = "hostpath-storage"
+      node_name = "workstation"
+      host_path = "/data/prometheus"
+      labels = {
+        app = "prometheus"
+      }
+    }
+    "grafana-storage" = {
+      storage_size = "10Gi"
+      access_modes = ["ReadWriteOnce"]
+      storage_class_name = "hostpath-storage"
+      node_name = "workstation"
+      host_path = "/data/grafana"
+      labels = {
+        app = "grafana"
+      }
+    }
+  }
+}
+
+module "prometheus-stack" {
+  source = "./modules/helm/prometheus"
+  
+  namespace           = module.namespaces.namespaces["monitoring"].name
+  storage_class       = module.monitoring-storage.storage_classes["hostpath-storage"].metadata[0].name
+  grafana_admin_password = "tu_password_seguro"
+  
+  prometheus_storage_size = "20Gi"
+  grafana_storage_size    = "10Gi"
+
+  depends_on = [
+    module.namespaces,
+    module.monitoring-storage
+  ]
 }

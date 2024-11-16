@@ -1,0 +1,20 @@
+---
+- name: Configure Kubernetes Master
+  hosts: kmaster
+  become: yes
+  vars:
+    is_master: true
+    initialize_cluster: true
+    pod_network_cidr: "10.244.0.0/16"
+    service_cidr: "10.96.0.0/12"
+  roles:
+    - kubernetes
+
+- name: Configure Kubernetes Workers
+  hosts: kworker
+  become: yes
+  vars:
+    is_master: false
+    initialize_cluster: false
+  roles:
+    - kubernetes

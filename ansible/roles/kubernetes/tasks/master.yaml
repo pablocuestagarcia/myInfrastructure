@@ -1,0 +1,43 @@
+---
+- name: Initialize Kubernetes cluster
+  command: >
+    kubeadm init 
+    --pod-network-cidr={{ pod_network_cidr }} 
+    --service-cidr={{ service_cidr }}
+    --ignore-preflight-errors=Swap
+  register: kubeadm_init
+  when: initialize_cluster | bool
+  ignore_errors: true
+
+- name: Create .kube directory
+  file:
+    path: /home/{{ ansible_user }}/.kube
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Copy kube admin config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/{{ ansible_user }}/.kube/config
+    remote_src: yes
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0600'
+
+- name: Install Calico network plugin
+  command: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+  become: yes
+  become_user: "{{ ansible_user }}"
+  when: initialize_cluster | bool
+
+- name: Get join command
+  command: kubeadm token create --print-join-command
+  register: join_command
+  when: initialize_cluster | bool
+
+- name: Store join command
+  set_fact:
+    join_command: "{{ join_command.stdout }}"
+  when: initialize_cluster | bool

@@ -1,0 +1,6 @@
+---
+- name: System Updates
+  import_playbook: playbooks/system-update.yaml
+
+- name: Kubernetes Setup
+  import_playbook: playbooks/kubernetes.yaml
