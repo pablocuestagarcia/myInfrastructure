@@ -1,5 +1,0 @@
----
-- name: Join cluster
-  command: "{{ hostvars['server']['join_command'] }}"
-  ignore_errors: true
-  changed_when: false

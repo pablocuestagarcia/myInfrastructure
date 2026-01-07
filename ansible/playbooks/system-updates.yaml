@@ -1,6 +1,0 @@
----
-- name: Update System Packages
-  hosts: kubernetes
-  become: yes
-  roles:
-    - ../roles/system-updates
