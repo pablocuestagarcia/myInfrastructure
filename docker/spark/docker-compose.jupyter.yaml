@@ -4,19 +4,20 @@ services:
     container_name: spark-jupyter
     hostname: spark-jupyter
     user: '0'
-    command: >
-      bash -c "
-      pip install --quiet jupyter delta-spark==3.0.0 pandas &&
-      jupyter notebook
-        --ip=0.0.0.0
-        --port=8888
-        --no-browser
-        --allow-root
-        --NotebookApp.token=spark
-        --notebook-dir=/opt/spark-apps
-      "
+    command:
+      - bash
+      - -c
+      - |
+        pip install --quiet jupyter delta-spark==3.0.0 pandas &&
+        jupyter notebook \
+          --ip=0.0.0.0 \
+          --port=8088 \
+          --no-browser \
+          --allow-root \
+          --ServerApp.token=spark \
+          --notebook-dir=/opt/spark-apps
     ports:
-      - '8888:8888'
+      - '8088:8088'
     environment:
       - SPARK_HOME=/opt/spark
       - PYSPARK_PYTHON=python3
@@ -26,6 +27,7 @@ services:
       - ./spark-events:/opt/spark/spark-events
       - ./jars:/opt/spark/extra-jars
       - ./conf:/opt/spark/conf
+    mem_limit: 8g
     networks:
       - spark-network
     restart: unless-stopped

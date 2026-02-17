@@ -47,6 +47,8 @@ services:
       - /dev/kmsg
     command:
       - '--store_container_labels=true'
+      - '--housekeeping_interval=2s'
+      - '--max_housekeeping_interval=5s'
     networks:
       - spark-network
     restart: unless-stopped

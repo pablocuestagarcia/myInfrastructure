@@ -44,7 +44,7 @@ logs:
 
 # --- Dependencies ---
 
-PIP_PACKAGES ?= requests
+PIP_PACKAGES ?= requests pandas pyarrow delta-spark prometheus_client
 
 pip-install:
 	@docker compose -f $(COMPOSE_FILE) exec -u 0 -T $(MASTER) pip install --quiet $(PIP_PACKAGES)
