@@ -1,0 +1,33 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Spark Master metrics (PrometheusServlet)
+  - job_name: 'spark-master'
+    metrics_path: /metrics/prometheus/
+    static_configs:
+      - targets: ['spark-master:8080']
+
+  # Spark Worker metrics (production workers with fixed hostnames)
+  - job_name: 'spark-workers'
+    metrics_path: /metrics/prometheus/
+    static_configs:
+      - targets: ['spark-worker-1:8881', 'spark-worker-2:8882']
+
+  # Pushgateway (custom app metrics pushed by workers)
+  - job_name: 'pushgateway'
+    honor_labels: true
+    static_configs:
+      - targets: ['spark-pushgateway:9091']
+
+  # cAdvisor (container-level CPU, memory, network, disk metrics)
+  - job_name: 'cadvisor'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['spark-cadvisor:8080']
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

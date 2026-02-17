@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'spark'
+    orgId: 1
+    folderUid: ''
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/json

@@ -1,0 +1,47 @@
+apiVersion: k0sctl.k0sproject.io/v1beta1
+kind: Cluster
+metadata:
+  name: k0s-cluster
+spec:
+  hosts:
+    - role: controller+worker
+      noTaints: true
+      uploadBinary: false
+      ssh:
+        address: 192.168.68.56
+        user: root
+        port: 22
+        keyPath: ~/.ssh/master
+      
+    - role: worker
+      uploadBinary: false
+      ssh:
+        address: 192.168.68.63
+        user: root
+        port: 22
+        keyPath: /.ssh/master
+  k0s:
+    version: v1.33.4+k0s.0      # Versión estable actual (ajustar según necesidad)
+    versionChannel: stable
+    config:
+      apiVersion: k0s.k0sproject.io/v1beta1
+      kind: ClusterConfig
+      metadata:
+        name: raspberry-pi-k8s-cluster
+      spec:
+        api:
+          externalAddress: 192.168.68.56  # IP del nodo controlador
+        storage:
+          type: etcd
+        network:
+          provider: calico
+          calico:
+            mode: vxlan
+        podSecurityPolicy:
+          defaultPolicy: 00-k0s-privileged
+        controllerManager:
+          extraArgs:
+            bind-address: "0.0.0.0"
+        scheduler:
+          extraArgs:
+            bind-address: "0.0.0.0"

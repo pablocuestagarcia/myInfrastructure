@@ -1,0 +1,91 @@
+services:
+  postgres:
+    image: postgres:16.11-alpine3.22  # Alpine reduce superficie de ataque
+    container_name: postgres
+    restart: unless-stopped
+    hostname: postgres-primary
+    # NOTA: En producción real, considera exponer solo a través de red interna
+    # ports solo son necesarios para acceso externo directo
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER:-postgres_admin}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_admin_password
+      POSTGRES_DB: ${POSTGRES_DEFAULT_DB:-application_db}
+      POSTGRES_INITDB_ARGS: "--data-checksums --auth-host=scram-sha-256"
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+      PGDATA: /var/lib/postgresql/data  # Ruta explícita para compatibilidad
+    secrets:
+      - postgres_admin_password
+      - postgres_migrator_password
+      - postgres_rw_password
+      - postgres_ro_password
+    volumes:
+      # Volumen nombrado para persistencia (crítico para producción)
+      - postgres_data:/var/lib/postgresql/data
+      # Configuración personalizada montada como read-only
+      - ./conf/postgres.conf:/etc/postgresql/postgresql.conf:ro
+      # Scripts de inicialización automática
+      - ./init-scripts:/docker-entrypoint-initdb.d:ro
+      # Directorio para WAL separado (opcional, para optimización de IO)
+      # - /path/to/ssd/wal:/var/lib/postgresql/wal:rw
+    command: 
+      - "postgres"
+      - "-c"
+      - "config_file=/etc/postgresql/postgresql.conf"
+      - "-c"
+      - "log_statement=none"  # En producción, evita registrar consultas completas
+      - "-c"
+      - "log_duration=on"
+      - "-c"
+      - "log_connections=on"
+      - "-c"
+      - "log_disconnections=on"
+    networks:
+      - postgres_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_ADMIN_USER:-postgres_admin} -d ${POSTGRES_DEFAULT_DB:-application_db} || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+        reservations:
+          memory: 2G
+          cpus: '1.0'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  postgres_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24  # Subnet privada específica
+    # Opcional: habilitar para mayor aislamiento
+    # internal: true
+
+volumes:
+  postgres_data:
+    driver: local
+    # Para entornos cloud, considera driver específico (e.g., azurefile, ebs)
+    # driver_opts:
+    #   type: "nfs"
+    #   o: "addr=nas.example.com,rw,nolock,soft"
+
+secrets:
+  postgres_admin_password:
+    file: ./secrets/POSTGRES_ADMIN_PASSWORD.txt
+  postgres_migrator_password:
+    file: ./secrets/POSTGRES_MIGRATOR_PASSWORD.txt
+  postgres_rw_password:
+    file: ./secrets/POSTGRES_RW_PASSWORD.txt
+  postgres_ro_password:
+    file: ./secrets/POSTGRES_RO_PASSWORD.txt

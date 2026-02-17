@@ -1,0 +1,35 @@
+services:
+  jupyter:
+    image: apache/spark:3.5.0
+    container_name: spark-jupyter
+    hostname: spark-jupyter
+    user: '0'
+    command: >
+      bash -c "
+      pip install --quiet jupyter delta-spark==3.0.0 pandas &&
+      jupyter notebook
+        --ip=0.0.0.0
+        --port=8888
+        --no-browser
+        --allow-root
+        --NotebookApp.token=spark
+        --notebook-dir=/opt/spark-apps
+      "
+    ports:
+      - '8888:8888'
+    environment:
+      - SPARK_HOME=/opt/spark
+      - PYSPARK_PYTHON=python3
+    volumes:
+      - ./spark-apps:/opt/spark-apps
+      - ./spark-data:/opt/spark-data
+      - ./spark-events:/opt/spark/spark-events
+      - ./jars:/opt/spark/extra-jars
+      - ./conf:/opt/spark/conf
+    networks:
+      - spark-network
+    restart: unless-stopped
+
+networks:
+  spark-network:
+    external: true

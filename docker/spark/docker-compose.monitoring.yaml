@@ -1,0 +1,78 @@
+services:
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: spark-prometheus
+    hostname: spark-prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=7d'
+    networks:
+      - spark-network
+    restart: unless-stopped
+
+  pushgateway:
+    image: prom/pushgateway:v1.7.0
+    container_name: spark-pushgateway
+    hostname: spark-pushgateway
+    ports:
+      - '9091:9091'
+    networks:
+      - spark-network
+    restart: unless-stopped
+
+  # NOTE: cAdvisor requires Docker Engine (not Docker Desktop) for per-container metrics.
+  # Docker Desktop runs containers inside a VM, so cAdvisor cannot access the Docker daemon.
+  # With Docker Engine, query by: container_network_transmit_bytes_total{name=~"spark-worker.*"}
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.52.1
+    container_name: spark-cadvisor
+    hostname: spark-cadvisor
+    ports:
+      - '8888:8080'
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    command:
+      - '--store_container_labels=true'
+    networks:
+      - spark-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: spark-grafana
+    hostname: spark-grafana
+    ports:
+      - '3000:3000'
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - spark-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  spark-network:
+    external: true

@@ -1,0 +1,53 @@
+# values.yaml
+executor: "KubernetesExecutor"
+
+# Configuración de la base de datos
+postgresql:
+  enabled: true
+  auth:
+    username: airflow
+    password: airflow123
+    database: airflow
+
+# Redis para CeleryExecutor (opcional)
+redis:
+  enabled: false
+
+# Configuración del webserver
+webserver:
+  defaultUser:
+    enabled: true
+    role: Admin
+    username: admin
+    email: admin@example.com
+    firstName: admin
+    lastName: user
+    password: admin123
+
+# Sincronización de DAGs
+dags:
+  persistence:
+    enabled: true
+    size: 1Gi
+    accessMode: ReadWriteOnce
+
+# Configuración de workers
+workers:
+  replicas: 2
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+# Scheduler
+scheduler:
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
